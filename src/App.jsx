@@ -1,9 +1,11 @@
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import { UI } from "./components/UI";
 
-export default function App() {
+function App() {
   return (
     <>
+      <UI />
       <Canvas
         camera={{
           position: [3, 3, 3],
@@ -19,3 +21,5 @@ export default function App() {
     </>
   );
 }
+
+export default App;
