@@ -13,7 +13,7 @@ A powerful 3D character customization tool built with React Three Fiber (R3F), a
 
 ## Demo
 
-[View Live Demo](#) <!-- Add your demo link when available -->
+[View Live Demo](https://r3f-ultimate-character-c-u45360.vm.elestio.app/) <!-- Add your demo link when available -->
 
 ## Installation
 
