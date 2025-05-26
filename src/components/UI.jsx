@@ -26,9 +26,9 @@ const AssetsBox = () => {
         ))}
       </div>
       <div className="flex gap-2 flex-wrap">
-        {currentCategory?.assets.map((asset, index) => (
+        {currentCategory?.assets.map((asset) => (
           <button
-            key={index}
+            key={asset.thumbnail}
             className={`w-20 h-20 rounded-md overflow-hidden bg-gray-200 pointer-events-auto hover:opacity-100 transition-all border-2 duration-500`}
           >
             <img src={pb.files.getURL(asset, asset.thumbnail)} />
