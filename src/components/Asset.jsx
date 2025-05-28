@@ -55,13 +55,24 @@ export const Asset = ({ url, categoryName, skeleton }) => {
     throw new Error("Asset: 'skeleton' prop is required");
   }
 
-  // Loads the GLTF model from the provided URL.
-  // `scene` contains the 3D model's hierarchy.
+  /** Loads the GLTF model from the provided URL.
+   * `scene` contains the 3D model's hierarchy.
+   */
   const { scene } = useGLTF(url);
 
-  // Retrieves the customization state from the global store.
-  // `customization` holds the current configuration of all categories.
+  /**
+   * Retrieves the customization state from the global store.
+   * `customization` holds the current configuration of all categories.
+   */
   const customization = useConfiguratorStore((state) => state.customization);
+
+  /**
+   * Retrieves the `lockedGroups` state from the global store.
+   * `lockedGroups` is an object where keys are names of categories
+   * that are currently "locked" by another selected asset, and values
+   * provide details about which asset is causing the lock.
+   */
+  const lockedGroups = useConfiguratorStore((state) => state.lockedGroups);
 
   // Gets the specific color for the current asset's category from the customization state.
   const assetColor = customization[categoryName].color;
@@ -107,7 +118,11 @@ export const Asset = ({ url, categoryName, skeleton }) => {
       }
     });
     return items;
-  }, [scene, skin]);
+  }, [scene]);
+
+  if (lockedGroups[categoryName]) {
+    return null;
+  }
 
   /**
    * Returns a list of skinnedMesh components for each item in the attachedItems array.
