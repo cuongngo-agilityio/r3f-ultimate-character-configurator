@@ -27,12 +27,6 @@
  * @property {function(string, object): void} changeAsset - Changes the selected asset for a given category.
  * @property {function(): void} randomize - Randomly selects assets and colors for all categories.
  */
-
-/**
- * Creates and exports the Zustand store for the configurator.
- * @returns {import("zustand").UseBoundStore<import("zustand").StoreApi<ConfiguratorState>>}
- */
-
 import { create } from "zustand";
 import PocketBase from "pocketbase";
 import { MeshStandardMaterial } from "three";
@@ -56,7 +50,11 @@ export const useConfiguratorStore = create((set, get) => ({
   // This allows the Avatar component to set the download function
   setDownload: (download) => set({ download }),
 
-  // Function to update the color of the current category
+  /**
+   * Updates the color for the currently selected customization category.
+   * If the current category is "Head", it also updates the skin color.
+   * @param {string} color - The new color to apply.
+   */
   updateColor: (color) => {
     set((state) => ({
       customization: {
@@ -77,7 +75,18 @@ export const useConfiguratorStore = create((set, get) => ({
     get().skin.color.set(color);
   },
 
-  // Function to fetch categories and assets from PocketBase
+  /**
+   * Fetches customization categories and assets from the PocketBase backend.
+   * It retrieves all "CustomizationGroups" and "CustomizationAssets".
+   * For each category, it filters its corresponding assets and initializes
+   * its entry in the `customization` state with a default color (the first
+   * from its color palette, if available) and a starting asset if specified
+   * in the category data.
+   * Finally, it updates the store with the fetched categories, assets,
+   * the first category as the `currentCategory`, and the initialized
+   * `customization` object.
+   * @async
+   */
   fetchCategories: async () => {
     // you can also fetch all records at once via getFullList
     const categories = await pb.collection("CustomizationGroups").getFullList({
