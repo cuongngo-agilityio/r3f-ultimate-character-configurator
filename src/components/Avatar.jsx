@@ -111,7 +111,7 @@ export const Avatar = ({ ...props }) => {
                 <Suspense key={customization[key].asset.id}>
                   <Asset
                     categoryName={key}
-                    url={pb.files.getUrl(
+                    url={pb.files.getURL(
                       customization[key].asset,
                       customization[key].asset.url
                     )}
