@@ -43,6 +43,7 @@ export const useConfiguratorStore = create((set, get) => ({
   categories: [],
   currentCategory: null,
   assets: [],
+  lockedGroups: {},
   skin: new MeshStandardMaterial({ color: 0xf5c6a5, roughness: 1 }),
   customization: {},
   download: () => {},
@@ -110,13 +111,14 @@ export const useConfiguratorStore = create((set, get) => ({
     });
 
     set({ categories, currentCategory: categories[0], assets, customization });
+    get().applyLockedAssets();
   },
 
   // Function to set the current category
   setCurrentCategory: (category) => set({ currentCategory: category }),
 
   // Function to change the asset for a specific category
-  changeAsset: (category, asset) =>
+  changeAsset: (category, asset) => {
     set((state) => ({
       customization: {
         ...state.customization,
@@ -125,7 +127,9 @@ export const useConfiguratorStore = create((set, get) => ({
           asset,
         },
       },
-    })),
+    }));
+    get().applyLockedAssets();
+  },
 
   // Function to reset the customization to default values
   randomize: () => {
@@ -150,5 +154,54 @@ export const useConfiguratorStore = create((set, get) => ({
       }
     });
     set({ customization });
+    get().applyLockedAssets();
+  },
+
+  /**
+   * Processes the currently selected assets in the `customization` state
+   * to determine which other asset groups are "locked" by them.
+   *
+   * It iterates through each customized category. If an asset in a category
+   * has a `lockedGroups` property (an array of category IDs that it locks),
+   * this function identifies those locked categories.
+   *
+   * For each locked category, it records the name of the asset causing the lock
+   * and the name of the category to which the locking asset belongs.
+   *
+   * The result is an object where keys are the names of locked categories,
+   * and values are arrays of objects, each specifying a locking asset's name
+   * and its original category. This `lockedGroups` object is then updated
+   * in the store.
+   *
+   * This is useful for UI to indicate or disable choices in categories
+   * that are implicitly set by another asset (e.g., a full-body suit might
+   * lock "Tops" and "Bottoms" categories).
+   */
+  applyLockedAssets: () => {
+    const customization = get().customization;
+    const categories = get().categories;
+    const lockedGroups = {};
+
+    Object.values(customization).forEach((category) => {
+      if (category.asset?.lockedGroups) {
+        category.asset.lockedGroups.forEach((group) => {
+          const categoryName = categories.find(
+            (category) => category.id === group
+          ).name;
+          if (!lockedGroups[categoryName]) {
+            lockedGroups[categoryName] = [];
+          }
+          const lockingAssetCategoryName = categories.find(
+            (cat) => cat.id === category.asset.group
+          ).name;
+          lockedGroups[categoryName].push({
+            name: category.asset.name,
+            categoryName: lockingAssetCategoryName,
+          });
+        });
+      }
+    });
+
+    set({ lockedGroups });
   },
 }));
