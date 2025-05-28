@@ -24,6 +24,7 @@ const AssetsBox = () => {
     setCurrentCategory,
     changeAsset,
     customization,
+    lockedGroups,
   } = useConfiguratorStore();
 
   useEffect(() => {
@@ -46,15 +47,25 @@ const AssetsBox = () => {
           </button>
         ))}
       </div>
+      {lockedGroups[currentCategory?.name] && (
+        <p className="text-red-400 px-6">
+          Asset is hidden by{" "}
+          {lockedGroups[currentCategory.name]
+            .map((asset) => `${asset.name} (${asset.categoryName})`)
+            .join(", ")}
+        </p>
+      )}
+
       <div className="flex gap-2 flex-wrap px-6">
         {currentCategory?.removable && (
           <button
             onClick={() => changeAsset(currentCategory.name, null)}
             className={`w-20 h-20 rounded-xl overflow-hidden pointer-events-auto hover:opacity-100 transition-all border-2 duration-300
+              bg-gradient-to-tr from-black to-gray-800
               ${
                 !customization[currentCategory.name].asset
                   ? "border-white opacity-100"
-                  : "opacity-80 border-transparent"
+                  : "opacity-80 border-black"
               }`}
           >
             <div className="w-full h-full flex items-center justify-center bg-black/40 text-white">
