@@ -9,46 +9,49 @@ export const Experience = () => {
   const setScreenshot = useConfiguratorStore((state) => state.setScreenshot);
   const gl = useThree((state) => state.gl);
   useEffect(() => {
-    // const screenshot = () => {
-    //   const overlayCanvas = document.createElement("canvas");
-    //   overlayCanvas.width = gl.domElement.width;
-    //   overlayCanvas.height = gl.domElement.height;
-    //   const overlayCtx = overlayCanvas.getContext("2d");
-    //   if (!overlayCtx) {
-    //     return;
-    //   }
-    //   // Draw the original rendered image onto the overlay canvas
-    //   overlayCtx.drawImage(gl.domElement, 0, 0);
-    //   // Create an image element for the logo
-    //   const logo = new Image();
-    //   logo.src = "/images/wawasensei-white.png";
-    //   logo.crossOrigin = "anonymous";
-    //   logo.onload = () => {
-    //     // Draw the logo onto the overlay canvas
-    //     const logoWidth = 765 / 4; // Adjust the width of the logo
-    //     const logoHeight = 370 / 4; // Adjust the height of the logo
-    //     const x = overlayCanvas.width - logoWidth - 42; // Adjust the position of the logo
-    //     const y = overlayCanvas.height - logoHeight - 42; // Adjust the position of the logo
-    //     overlayCtx.drawImage(logo, x, y, logoWidth, logoHeight);
-    //     // Create a link element to download the image
-    //     const link = document.createElement("a");
-    //     const date = new Date();
-    //     link.setAttribute(
-    //       "download",
-    //       `Avatar_${
-    //         date.toISOString().split("T")[0]
-    //       }_${date.toLocaleTimeString()}.png`
-    //     );
-    //     link.setAttribute(
-    //       "href",
-    //       overlayCanvas
-    //         .toDataURL("image/png")
-    //         .replace("image/png", "image/octet-stream")
-    //     );
-    //     link.click();
-    //   };
-    // };
-    // setScreenshot(screenshot);
+    const screenshot = () => {
+      const overlayCanvas = document.createElement("canvas");
+
+      overlayCanvas.width = gl.domElement.width;
+      overlayCanvas.height = gl.domElement.height;
+      const overlayCtx = overlayCanvas.getContext("2d");
+      if (!overlayCtx) {
+        return;
+      }
+      // Draw the original rendered image onto the overlay canvas
+      overlayCtx.drawImage(gl.domElement, 0, 0);
+
+      // Create an image element for the logo
+      const logo = new Image();
+      logo.src = "/images/wawasensei-white.png";
+      logo.crossOrigin = "anonymous";
+      logo.onload = () => {
+        // Draw the logo onto the overlay canvas
+        const logoWidth = 765 / 4; // Adjust the width of the logo
+        const logoHeight = 370 / 4; // Adjust the height of the logo
+        const x = overlayCanvas.width - logoWidth - 42; // Adjust the position of the logo
+        const y = overlayCanvas.height - logoHeight - 42; // Adjust the position of the logo
+        overlayCtx.drawImage(logo, x, y, logoWidth, logoHeight);
+
+        // Create a link element to download the image
+        const link = document.createElement("a");
+        const date = new Date();
+        link.setAttribute(
+          "download",
+          `Avatar_${
+            date.toISOString().split("T")[0]
+          }_${date.toLocaleTimeString()}.png`
+        );
+        link.setAttribute(
+          "href",
+          overlayCanvas
+            .toDataURL("image/png")
+            .replace("image/png", "image/octet-stream")
+        );
+        link.click();
+      };
+    };
+    setScreenshot(screenshot);
   }, [gl]);
 
   return (
