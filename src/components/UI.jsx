@@ -6,7 +6,29 @@
  */
 
 import { useEffect } from "react";
-import { pb, useConfiguratorStore } from "../store";
+import { pb, PHOTO_POSES, UI_MODES, useConfiguratorStore } from "../store";
+
+const PosesBox = () => {
+  const curPose = useConfiguratorStore((state) => state.pose);
+  const setPose = useConfiguratorStore((state) => state.setPose);
+  return (
+    <div className="pointer-events-auto rounded-t-lg bg-gradient-to-br from-black/30 to-indigo-900/20  backdrop-blur-sm drop-shadow-md flex p-6 gap-3">
+      {Object.keys(PHOTO_POSES).map((pose) => (
+        <button
+          className={`transition-colors duration-200 font-medium flex-shrink-0 border-b ${
+            curPose === PHOTO_POSES[pose]
+              ? "text-white shadow-purple-100 border-b-white"
+              : "text-gray-200 hover:text-gray-100 border-b-transparent"
+          }
+       `}
+          onClick={() => setPose(PHOTO_POSES[pose])}
+        >
+          {pose}
+        </button>
+      ))}
+    </div>
+  );
+};
 
 /**
  * `AssetsBox` component displays the categories and assets for customization.
@@ -172,6 +194,9 @@ export const UI = () => {
     (state) => state.currentCategory
   );
   const customization = useConfiguratorStore((state) => state.customization);
+  const mode = useConfiguratorStore((state) => state.mode);
+  const setMode = useConfiguratorStore((state) => state.setMode);
+
   return (
     <main className="pointer-events-none fixed z-10 inset-0 select-none">
       <div className="mx-auto h-full max-w-screen-xl w-full flex flex-col justify-between">
@@ -184,13 +209,46 @@ export const UI = () => {
           </a>
           <div className="flex items-cente gap-2">
             <RandomizeButton />
+            {/* <ScreenshotButton /> */}
             <DownloadButton />
           </div>
         </div>
         <div className="px-10 flex flex-col">
-          {currentCategory?.colorPalette &&
-            customization[currentCategory.name] && <ColorPicker />}
-          <AssetsBox />
+          {mode === UI_MODES.CUSTOMIZE && (
+            <>
+              {currentCategory?.colorPalette &&
+                customization[currentCategory.name] && <ColorPicker />}
+              <AssetsBox />
+            </>
+          )}
+          {mode === UI_MODES.PHOTO && <PosesBox />}
+          <div className="flex justify-stretch">
+            <button
+              className={`flex-1 pointer-events-auto  p-4 text-white transition-colors duration-200 font-medium
+                ${
+                  mode === UI_MODES.CUSTOMIZE
+                    ? "bg-indigo-500/90"
+                    : "bg-indigo-500/30 hover:bg-indigo-500/50"
+                }
+              `}
+              onClick={() => setMode(UI_MODES.CUSTOMIZE)}
+            >
+              Customize avatar
+            </button>
+            <div className="w-px bg-white/30"></div>
+            <button
+              className={`flex-1 pointer-events-auto p-4 text-white transition-colors duration-200 font-medium
+                ${
+                  mode === UI_MODES.PHOTO
+                    ? "bg-indigo-500/90"
+                    : "bg-indigo-500/30 hover:bg-indigo-500/50"
+                }
+                `}
+              onClick={() => setMode(UI_MODES.PHOTO)}
+            >
+              Photo booth
+            </button>
+          </div>
         </div>
       </div>
     </main>
