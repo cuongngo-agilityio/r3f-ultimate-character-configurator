@@ -37,9 +37,33 @@ if (!pocketBaseUrl) {
   throw new Error("VITE_POCKETBASE_URL is required");
 }
 
+export const PHOTO_POSES = {
+  IDLE: "Idle",
+  CHILL: "Chill",
+  COOL: "Cool",
+  PUNCH: "Punch",
+  NINJA: "Ninja",
+  KING: "King",
+  BUSY: "Busy",
+};
+export const UI_MODES = {
+  PHOTO: "photo",
+  CUSTOMIZE: "customize",
+};
+
 export const pb = new PocketBase(pocketBaseUrl);
 
 export const useConfiguratorStore = create((set, get) => ({
+  mode: UI_MODES.CUSTOMIZE,
+  setMode: (mode) => {
+    set({ mode });
+    if (mode === UI_MODES.CUSTOMIZE) {
+      set({ pose: PHOTO_POSES.IDLE });
+    }
+  },
+
+  pose: PHOTO_POSES.IDLE,
+  setPose: (pose) => set({ pose }),
   categories: [],
   currentCategory: null,
   assets: [],
@@ -50,6 +74,9 @@ export const useConfiguratorStore = create((set, get) => ({
   // Function to set the download function in the store
   // This allows the Avatar component to set the download function
   setDownload: (download) => set({ download }),
+
+  screenshot: () => {},
+  setScreenshot: (screenshot) => set({ screenshot }),
 
   /**
    * Updates the color for the currently selected customization category.
@@ -92,7 +119,7 @@ export const useConfiguratorStore = create((set, get) => ({
     // you can also fetch all records at once via getFullList
     const categories = await pb.collection("CustomizationGroups").getFullList({
       sort: "+position",
-      expand: "colorPalette",
+      expand: "colorPalette, cameraPlacement",
     });
     const assets = await pb.collection("CustomizationAssets").getFullList({
       sort: "-created",
