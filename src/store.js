@@ -75,6 +75,9 @@ export const useConfiguratorStore = create((set, get) => ({
   // This allows the Avatar component to set the download function
   setDownload: (download) => set({ download }),
 
+  screenshot: () => {},
+  setScreenshot: (screenshot) => set({ screenshot }),
+
   /**
    * Updates the color for the currently selected customization category.
    * If the current category is "Head", it also updates the skin color.
